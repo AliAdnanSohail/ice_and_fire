@@ -1,8 +1,7 @@
 from rest_framework import status
 from django.urls import reverse
-
-from ..models.book import Book
-from ..serializers import BookSerializer
+from ice_and_fire_api.book.models.book import Book
+from ice_and_fire_api.book.serializers import BookSerializer
 from .base_view import BaseViewTest
 
 
@@ -23,15 +22,15 @@ class AllBooksTest(BaseViewTest):
         This test to check post request is creating new book
         """
         book = {
-            "name": "test_name",
+            "name": "test_name3",
             "isbn": "isbn",
             "number_of_pages": 250,
             "publisher": "test_publisher",
             "country": "test_country",
             "release_date": "2016-02-02",
             "authors": [
-                "auth1",
-                "auth2"
+                {"name": "auth1"},
+                {"name": "auth2"}
             ]
         }
         response = self.client.post(reverse('books-all'), book)

@@ -15,7 +15,9 @@
  - Run `source venv/bin/activate`
  - Run `pip3 install --requirement requirements.txt` (to install all project dependencies)
  - Run `python3 manage.py migrate`
+ - Run `python3 manage.py createsuperuser` (to create super user for Country CRUD)
  - Run `python3 manage.py runserver` (to start server)
+ - Go to http://localhost:8000/admin/book/country/add/ to add new countries in database 
  - Go to http://localhost:8000/api/books/
  - Run `python3 ./manage.py test book.tests` (to run test cases
 
