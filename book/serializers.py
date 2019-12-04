@@ -2,6 +2,22 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse
 from rest_framework import serializers
 from book.models.book import Book, Author, Country
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'username', 'email', 'password']
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
+
+    def create(self, validated_data):
+        print(validated_data["password"], "is the password")
+        validated_data['password'] = make_password(validated_data.get('password'))
+        return super(UserSerializer, self).create(validated_data)
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -66,3 +82,4 @@ class BookSerializer(serializers.ModelSerializer):
 
         book_instance.save()
         return book_instance
+

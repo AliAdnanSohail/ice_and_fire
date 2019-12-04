@@ -1,14 +1,27 @@
 from rest_framework import generics, status, filters
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 from book.models.book import Book
 from book.serializers import BookSerializer
 
 
-class BookListCreateView(generics.ListCreateAPIView):
+class BookBaseView:
     serializer_class = BookSerializer
     queryset = Book.objects.all()
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+
+class BookListCreateView(BookBaseView, generics.ListCreateAPIView):
     filter_backends = [filters.SearchFilter]
     search_fields = ['name', 'country', 'publisher', 'release_date']
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [AllowAny(), ]
+        return super(BookListCreateView, self).get_permissions()
 
     def list(self, request, *args, **kwargs):
         response = super().list(request, *args, **kwargs)
@@ -21,10 +34,7 @@ class BookListCreateView(generics.ListCreateAPIView):
         return Response(formatted_response, status=status.HTTP_201_CREATED)
 
 
-class BookRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer
-
+class BookRetrieveUpdateDestroyView(BookBaseView, generics.RetrieveUpdateDestroyAPIView):
     def get(self, request, *args, **kwargs):
         response = super().get(request, *args, **kwargs)
         formatted_response = {'data': response.data, 'status': 'success', 'status_code': status.HTTP_200_OK}
